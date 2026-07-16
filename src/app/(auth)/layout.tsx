@@ -12,7 +12,7 @@ export default function AuthLayout({
         <Logo />
         <Link
           href="/"
-          className="text-sm text-gray-400 transition-colors hover:text-gray-200"
+          className="text-lg font-semibold text-ink-soft transition-colors hover:text-ink"
         >
           ← Back home
         </Link>

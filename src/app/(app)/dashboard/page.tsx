@@ -1,149 +1,134 @@
 import Link from "next/link";
-import { requireProfile, getBrandProfile } from "@/lib/data";
-import { createClient } from "@/lib/supabase/server";
-import { PLATFORMS, STATUS_META, platformMeta } from "@/lib/constants";
-import type { ContentItem } from "@/lib/types";
+import { requireProfile, getTasks } from "@/lib/data";
+import { TaskCard } from "@/components/tasks/TaskCard";
 
-export const metadata = { title: "Dashboard — AI Sage" };
+export const metadata = { title: "Home — Task Flow" };
+export const dynamic = "force-dynamic";
+
+const ACTIVE_STATUSES = ["open", "matched", "scheduled", "in_progress"];
 
 export default async function DashboardPage() {
   const profile = await requireProfile();
-  const supabase = await createClient();
-  const brand = await getBrandProfile(profile.id);
+  const tasks = await getTasks(profile.id);
 
-  const { data: recent } = await supabase
-    .from("content_items")
-    .select("*")
-    .order("updated_at", { ascending: false })
-    .limit(5);
-
-  const { count: total } = await supabase
-    .from("content_items")
-    .select("*", { count: "exact", head: true });
-
-  const { count: published } = await supabase
-    .from("content_items")
-    .select("*", { count: "exact", head: true })
-    .eq("status", "published");
-
-  const items = (recent as ContentItem[]) ?? [];
-  const firstName = (profile.full_name || "there").split(" ")[0];
+  const firstName = (profile.full_name || "").split(" ")[0];
+  const active = tasks.filter((t) => ACTIVE_STATUSES.includes(t.status));
+  const completed = tasks.filter((t) => t.status === "completed");
+  const needsHelper = tasks.filter((t) => t.status === "open");
 
   return (
-    <div className="space-y-8">
-      <header>
-        <h1 className="text-h1">Welcome back, {firstName} 👋</h1>
-        <p className="mt-1 text-gray-400">
-          Here&apos;s your content workspace at a glance.
+    <div className="animate-fade-in space-y-8">
+      <div>
+        <h1 className="text-h2">
+          Hello{firstName ? `, ${firstName}` : ""} 👋
+        </h1>
+        <p className="mt-2 text-xl text-ink-soft">
+          What would you like help with today?
         </p>
-      </header>
+      </div>
 
-      {/* Brand voice nudge */}
-      {!brand && (
-        <div className="card flex flex-col items-start justify-between gap-4 border-brand-400/40 bg-brand-500/5 sm:flex-row sm:items-center">
+      {/* Primary call to action — always front and center */}
+      <Link
+        href="/tasks/new"
+        className="block rounded-3xl bg-warm-gradient p-8 text-white shadow-soft transition-transform hover:-translate-y-0.5"
+      >
+        <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h3 className="text-h3">Finish your brand voice setup</h3>
-            <p className="mt-1 text-sm text-gray-400">
-              Capture your tone and style rules so every draft ships on-brand.
+            <p className="text-2xl font-extrabold">Post a New Task</p>
+            <p className="mt-1 text-lg text-warm-50">
+              Tell us what you need — help is just a few taps away.
             </p>
           </div>
-          <Link href="/brand" className="btn-primary shrink-0">
-            Set up brand voice →
-          </Link>
+          <span className="btn btn-xl bg-white font-bold text-warm-600 hover:bg-warm-50">
+            ➕ Get Help Now
+          </span>
         </div>
-      )}
+      </Link>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+      <div className="grid grid-cols-3 gap-3">
         {[
-          { label: "Total drafts", value: total ?? 0, icon: "📄" },
-          { label: "Published", value: published ?? 0, icon: "🚀" },
-          {
-            label: "Brand voice",
-            value: brand ? "Active" : "Not set",
-            icon: "🎯",
-          },
+          { n: active.length, label: "Active tasks", icon: "📋" },
+          { n: completed.length, label: "Completed", icon: "🎉" },
+          { n: tasks.length, label: "Total posted", icon: "✨" },
         ].map((s) => (
-          <div key={s.label} className="card">
-            <div className="text-2xl">{s.icon}</div>
-            <div className="mt-3 text-2xl font-bold">{s.value}</div>
-            <div className="text-sm text-gray-400">{s.label}</div>
+          <div
+            key={s.label}
+            className="rounded-2xl border-2 border-surface-border bg-surface-raised p-4 text-center sm:p-5"
+          >
+            <div className="text-3xl" aria-hidden>
+              {s.icon}
+            </div>
+            <div className="mt-1 text-3xl font-extrabold text-brand-600">
+              {s.n}
+            </div>
+            <div className="text-base text-ink-soft">{s.label}</div>
           </div>
         ))}
       </div>
 
-      {/* Quick generate */}
-      <section>
-        <h2 className="text-h3">Generate content</h2>
-        <p className="mt-1 text-sm text-gray-400">
-          Start a draft for any platform — or open the full studio.
-        </p>
-        <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
-          {PLATFORMS.map((p) => (
-            <Link
-              key={p.id}
-              href={`/generate?platform=${p.id}`}
-              className="card group flex flex-col items-center gap-2 py-5 text-center transition-transform hover:-translate-y-1 hover:border-brand-400/50"
-            >
-              <span className="text-2xl">{p.icon}</span>
-              <span className="text-xs font-medium text-gray-300">
-                {p.label}
-              </span>
-            </Link>
-          ))}
-        </div>
-      </section>
-
-      {/* Recent activity */}
+      {/* Active tasks */}
       <section>
         <div className="flex items-center justify-between">
-          <h2 className="text-h3">Recent activity</h2>
-          <Link href="/content" className="text-sm text-brand-300 hover:text-brand-200">
-            View all →
-          </Link>
+          <h2 className="text-h3">Your active tasks</h2>
+          {tasks.length > 0 && (
+            <Link
+              href="/tasks"
+              className="text-lg font-bold text-brand-600 hover:text-brand-700"
+            >
+              See all →
+            </Link>
+          )}
         </div>
 
-        {items.length === 0 ? (
-          <div className="card mt-4 flex flex-col items-center py-12 text-center">
-            <span className="text-4xl">✨</span>
-            <h3 className="mt-3 text-h3">No content yet</h3>
-            <p className="mt-1 max-w-sm text-sm text-gray-400">
-              Generate your first on-brand draft and it&apos;ll show up here.
-            </p>
-            <Link href="/generate" className="btn-primary mt-5">
-              Create your first draft →
-            </Link>
+        {active.length > 0 ? (
+          <div className="mt-4 space-y-3">
+            {active.slice(0, 4).map((t) => (
+              <TaskCard key={t.id} task={t} />
+            ))}
           </div>
         ) : (
-          <ul className="mt-4 space-y-2">
-            {items.map((item) => {
-              const meta = platformMeta(item.platform);
-              const status = STATUS_META[item.status];
-              return (
-                <li key={item.id}>
-                  <Link
-                    href={`/content/${item.id}`}
-                    className="card flex items-center gap-4 py-4 transition-colors hover:border-brand-400/40"
-                  >
-                    <span className="text-xl">{meta.icon}</span>
-                    <div className="min-w-0 flex-1">
-                      <p className="truncate font-medium text-gray-100">
-                        {item.title}
-                      </p>
-                      <p className="text-xs text-gray-500">
-                        {meta.label} ·{" "}
-                        {new Date(item.updated_at).toLocaleDateString()}
-                      </p>
-                    </div>
-                    <span className={`chip ${status.className}`}>
-                      {status.label}
-                    </span>
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
+          <div className="mt-4 rounded-2xl border-2 border-dashed border-surface-border bg-surface-raised p-8 text-center">
+            <div className="text-5xl" aria-hidden>
+              🌟
+            </div>
+            <p className="mt-3 text-xl font-bold text-ink">
+              You have no active tasks
+            </p>
+            <p className="mt-1 text-lg text-ink-soft">
+              Posting your first task takes about two minutes.
+            </p>
+            <Link href="/tasks/new" className="btn-warm btn-xl mt-5 inline-flex">
+              Post Your First Task
+            </Link>
+          </div>
         )}
+      </section>
+
+      {/* Helpful nudge */}
+      {needsHelper.length > 0 && (
+        <div className="rounded-2xl border-2 border-brand-200 bg-brand-50 p-5">
+          <p className="text-lg font-semibold text-brand-700">
+            🔎 {needsHelper.length} task
+            {needsHelper.length > 1 ? "s are" : " is"} waiting for you to pick a
+            helper. Open a task to see who&apos;s available.
+          </p>
+        </div>
+      )}
+
+      {/* Explore helpers */}
+      <section className="rounded-2xl border-2 border-surface-border bg-surface-raised p-6">
+        <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h2 className="text-h3">Meet our verified helpers</h2>
+            <p className="mt-1 text-lg text-ink-soft">
+              Every helper is background-checked and comes with references.
+            </p>
+          </div>
+          <Link href="/taskers" className="btn-secondary shrink-0">
+            🤝 Browse helpers
+          </Link>
+        </div>
       </section>
     </div>
   );

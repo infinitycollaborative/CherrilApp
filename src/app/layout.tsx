@@ -6,15 +6,19 @@ import { ToastProvider } from "@/components/ui/Toast";
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
 export const metadata: Metadata = {
-  title: "AI Sage — On-brand content in minutes, not hours",
+  title: "Task Flow — Trusted help for everyday tasks",
   description:
-    "AI Sage is the AI writing assistant for B2B SaaS content marketers. Generate on-brand, multi-platform content drafts from a single prompt.",
+    "Task Flow helps you quickly find reliable, background-checked local helpers for grocery shopping, repairs, pet care, rides and more. Post a task in minutes.",
+  applicationName: "Task Flow",
+  appleWebApp: { capable: true, title: "Task Flow", statusBarStyle: "default" },
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0b0f17",
+  themeColor: "#1466B8",
   width: "device-width",
   initialScale: 1,
+  // Let users pinch-zoom — never trap older readers at a fixed size.
+  maximumScale: 5,
 };
 
 export default function RootLayout({
@@ -23,7 +27,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${inter.variable} dark`}>
+    <html lang="en" className={inter.variable}>
       <body className="min-h-screen">
         <ToastProvider>{children}</ToastProvider>
       </body>

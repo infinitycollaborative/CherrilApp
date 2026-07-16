@@ -22,18 +22,20 @@ export async function updateProfile(
   if (!user) return { error: "Not authenticated." };
 
   const full_name = String(formData.get("full_name") || "").trim();
-  const company_name = String(formData.get("company_name") || "").trim();
-  const avatar_url = String(formData.get("avatar_url") || "").trim() || null;
+  const phone = String(formData.get("phone") || "").trim() || null;
+  const city = String(formData.get("city") || "").trim() || null;
+  const emergency_contact =
+    String(formData.get("emergency_contact") || "").trim() || null;
 
   const { error } = await supabase
     .from("profiles")
-    .update({ full_name, company_name, avatar_url })
+    .update({ full_name, phone, city, emergency_contact })
     .eq("id", user.id);
   if (error) return { error: error.message };
 
   revalidatePath("/settings");
   revalidatePath("/", "layout");
-  return { ok: true, message: "Profile updated." };
+  return { ok: true, message: "Your details were saved." };
 }
 
 export async function updateNotifications(
@@ -46,17 +48,17 @@ export async function updateNotifications(
   } = await supabase.auth.getUser();
   if (!user) return { error: "Not authenticated." };
 
-  const notify_product = formData.get("notify_product") === "on";
-  const notify_marketing = formData.get("notify_marketing") === "on";
+  const notify_sms = formData.get("notify_sms") === "on";
+  const notify_email = formData.get("notify_email") === "on";
 
   const { error } = await supabase
     .from("profiles")
-    .update({ notify_product, notify_marketing })
+    .update({ notify_sms, notify_email })
     .eq("id", user.id);
   if (error) return { error: error.message };
 
   revalidatePath("/settings");
-  return { ok: true, message: "Notification preferences saved." };
+  return { ok: true, message: "Notification choices saved." };
 }
 
 export async function changePassword(
@@ -69,11 +71,11 @@ export async function changePassword(
 
   if (password.length < 8)
     return { error: "Password must be at least 8 characters." };
-  if (password !== confirm) return { error: "Passwords don't match." };
+  if (password !== confirm) return { error: "The two passwords don't match." };
 
   const { error } = await supabase.auth.updateUser({ password });
   if (error) return { error: error.message };
-  return { ok: true, message: "Password changed." };
+  return { ok: true, message: "Your password was changed." };
 }
 
 export async function deleteAccount(): Promise<ActionState> {
@@ -83,11 +85,10 @@ export async function deleteAccount(): Promise<ActionState> {
   } = await supabase.auth.getUser();
   if (!user) return { error: "Not authenticated." };
 
-  // Owned rows cascade from profiles/auth deletion, but remove app data
-  // explicitly so it's gone even without the service role.
-  await supabase.from("content_items").delete().eq("user_id", user.id);
-  await supabase.from("brand_profiles").delete().eq("user_id", user.id);
-  await supabase.from("integrations").delete().eq("user_id", user.id);
+  // Remove app data explicitly so it's gone even without the service role.
+  await supabase.from("payments").delete().eq("user_id", user.id);
+  await supabase.from("task_messages").delete().eq("user_id", user.id);
+  await supabase.from("tasks").delete().eq("user_id", user.id);
 
   const admin = createAdminClient();
   if (admin) {

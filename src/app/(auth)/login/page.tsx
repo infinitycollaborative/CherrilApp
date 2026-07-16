@@ -16,18 +16,18 @@ function LoginForm() {
   return (
     <div className="card">
       <h1 className="text-h2">Welcome back</h1>
-      <p className="mt-1 text-sm text-gray-400">
-        Log in to keep your content on-brand.
+      <p className="mt-2 text-lg text-ink-soft">
+        Log in to see your tasks and helpers.
       </p>
 
       <div className="mt-6">
         <GoogleButton label="Continue with Google" />
       </div>
 
-      <div className="my-5 flex items-center gap-3 text-xs text-gray-500">
-        <span className="h-px flex-1 bg-surface-border" />
+      <div className="my-5 flex items-center gap-3 text-base text-ink-muted">
+        <span className="h-0.5 flex-1 bg-surface-border" />
         or with email
-        <span className="h-px flex-1 bg-surface-border" />
+        <span className="h-0.5 flex-1 bg-surface-border" />
       </div>
 
       <form action={action} className="space-y-4">
@@ -43,7 +43,7 @@ function LoginForm() {
             autoComplete="email"
             required
             className="input"
-            placeholder="you@company.com"
+            placeholder="you@email.com"
           />
         </div>
         <div>
@@ -70,12 +70,12 @@ function LoginForm() {
         </div>
 
         {state.error && (
-          <p className="rounded-lg bg-red-500/10 px-3 py-2 text-sm text-red-300">
+          <p className="rounded-xl bg-red-50 px-4 py-3 text-base font-medium text-red-700">
             {state.error}
           </p>
         )}
         {state.message && (
-          <p className="rounded-lg bg-brand-500/10 px-3 py-2 text-sm text-brand-200">
+          <p className="rounded-xl bg-brand-50 px-4 py-3 text-base font-medium text-brand-700">
             {state.message}
           </p>
         )}
@@ -83,10 +83,10 @@ function LoginForm() {
         <SubmitButton>Log in</SubmitButton>
       </form>
 
-      <p className="mt-6 text-center text-sm text-gray-400">
-        New to AI Sage?{" "}
-        <Link href="/signup" className="font-semibold text-brand-300">
-          Sign up free
+      <p className="mt-6 text-center text-lg text-ink-soft">
+        New to Task Flow?{" "}
+        <Link href="/signup" className="font-bold text-brand-600">
+          Create a free account
         </Link>
       </p>
     </div>
