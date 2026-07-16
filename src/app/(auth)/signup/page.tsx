@@ -11,51 +11,56 @@ export default function SignupPage() {
 
   return (
     <div className="card">
-      <h1 className="text-h2">Create your account</h1>
-      <p className="mt-1 text-sm text-gray-400">
-        Start shipping on-brand content in minutes. No credit card required.
+      <h1 className="text-h2">Create your free account</h1>
+      <p className="mt-2 text-lg text-ink-soft">
+        It only takes a minute. No credit card required.
       </p>
 
       <div className="mt-6">
         <GoogleButton label="Sign up with Google" />
       </div>
 
-      <div className="my-5 flex items-center gap-3 text-xs text-gray-500">
-        <span className="h-px flex-1 bg-surface-border" />
+      <div className="my-5 flex items-center gap-3 text-base text-ink-muted">
+        <span className="h-0.5 flex-1 bg-surface-border" />
         or with email
-        <span className="h-px flex-1 bg-surface-border" />
+        <span className="h-0.5 flex-1 bg-surface-border" />
       </div>
 
       <form action={action} className="space-y-4">
         <div>
           <label className="label" htmlFor="full_name">
-            Full name
+            Your name
           </label>
           <input
             id="full_name"
             name="full_name"
             type="text"
             autoComplete="name"
+            required
             className="input"
-            placeholder="Alex Rivera"
+            placeholder="Dorothy Miller"
           />
         </div>
         <div>
-          <label className="label" htmlFor="company_name">
-            Company name
+          <label className="label" htmlFor="phone">
+            Phone number{" "}
+            <span className="font-normal text-ink-muted">(optional)</span>
           </label>
           <input
-            id="company_name"
-            name="company_name"
-            type="text"
-            required
+            id="phone"
+            name="phone"
+            type="tel"
+            autoComplete="tel"
             className="input"
-            placeholder="Acme SaaS"
+            placeholder="(813) 555-0142"
           />
+          <p className="help-text">
+            So your helper can reach you if needed. We never share it publicly.
+          </p>
         </div>
         <div>
           <label className="label" htmlFor="email">
-            Work email
+            Email address
           </label>
           <input
             id="email"
@@ -64,12 +69,12 @@ export default function SignupPage() {
             autoComplete="email"
             required
             className="input"
-            placeholder="you@company.com"
+            placeholder="you@email.com"
           />
         </div>
         <div>
           <label className="label" htmlFor="password">
-            Password
+            Create a password
           </label>
           <input
             id="password"
@@ -84,25 +89,25 @@ export default function SignupPage() {
         </div>
 
         {state.error && (
-          <p className="rounded-lg bg-red-500/10 px-3 py-2 text-sm text-red-300">
+          <p className="rounded-xl bg-red-50 px-4 py-3 text-base font-medium text-red-700">
             {state.error}
           </p>
         )}
         {state.message && (
-          <p className="rounded-lg bg-brand-500/10 px-3 py-2 text-sm text-brand-200">
+          <p className="rounded-xl bg-brand-50 px-4 py-3 text-base font-medium text-brand-700">
             {state.message}
           </p>
         )}
 
-        <SubmitButton>Create free account</SubmitButton>
+        <SubmitButton>Create my account</SubmitButton>
       </form>
 
-      <p className="mt-4 text-center text-xs text-gray-500">
-        By signing up you agree to our Terms & Privacy Policy.
+      <p className="mt-4 text-center text-base text-ink-muted">
+        By signing up you agree to our Terms &amp; Privacy Policy.
       </p>
-      <p className="mt-4 text-center text-sm text-gray-400">
+      <p className="mt-4 text-center text-lg text-ink-soft">
         Already have an account?{" "}
-        <Link href="/login" className="font-semibold text-brand-300">
+        <Link href="/login" className="font-bold text-brand-600">
           Log in
         </Link>
       </p>

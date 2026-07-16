@@ -1,8 +1,8 @@
 {
-  "name": "ai-sage",
+  "name": "task-flow",
   "version": "0.1.0",
   "private": true,
-  "description": "AI Sage — AI-powered mobile writing assistant for B2B SaaS Content Marketing Managers",
+  "description": "Task Flow — trusted help for everyday tasks. A senior-friendly mobile & web app to find reliable, background-checked local helpers.",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

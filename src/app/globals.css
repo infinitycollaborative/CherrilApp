@@ -4,21 +4,24 @@
 
 :root {
   --font-inter: "Inter", system-ui, sans-serif;
+  color-scheme: light;
 }
 
 html {
-  color-scheme: dark;
+  /* Large, comfortable base for older eyes */
+  font-size: 100%;
 }
 
 body {
-  @apply bg-surface-base text-gray-100 antialiased;
-  font-feature-settings: "cv11", "ss01";
+  @apply bg-surface-base text-ink antialiased;
+  font-size: 18px;
+  line-height: 1.6;
 }
 
-/* Thin, themed scrollbars */
+/* Comfortable, visible scrollbars */
 ::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
+  width: 12px;
+  height: 12px;
 }
 ::-webkit-scrollbar-thumb {
   @apply bg-surface-border rounded-full;
@@ -27,50 +30,78 @@ body {
   background: transparent;
 }
 
+/* Strong, always-visible focus for keyboard & low-vision users */
+:focus-visible {
+  outline: 3px solid #1466b8;
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
 @layer components {
   .btn {
-    @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5
-           text-sm font-semibold transition-all duration-150
-           disabled:cursor-not-allowed disabled:opacity-50 focus:outline-none
-           focus-visible:ring-2 focus-visible:ring-brand-400 focus-visible:ring-offset-2
-           focus-visible:ring-offset-surface-base;
+    @apply inline-flex items-center justify-center gap-2.5 rounded-2xl px-6
+           text-lg font-semibold transition-all duration-150
+           disabled:cursor-not-allowed disabled:opacity-50;
+    min-height: 56px; /* large, easy-to-tap targets */
   }
   .btn-primary {
-    @apply btn bg-brand-500 text-white hover:bg-brand-600 active:scale-[0.98]
+    @apply btn bg-brand-500 text-white hover:bg-brand-600 active:scale-[0.99]
+           shadow-soft;
+  }
+  .btn-warm {
+    @apply btn bg-warm-500 text-white hover:bg-warm-600 active:scale-[0.99]
+           shadow-soft;
+  }
+  .btn-verified {
+    @apply btn bg-verified-500 text-white hover:bg-verified-600 active:scale-[0.99]
            shadow-soft;
   }
   .btn-secondary {
-    @apply btn border border-surface-border bg-surface-overlay text-gray-100
-           hover:bg-surface-border active:scale-[0.98];
+    @apply btn border-2 border-surface-border bg-surface-raised text-ink
+           hover:bg-surface-overlay active:scale-[0.99];
   }
   .btn-ghost {
-    @apply btn text-gray-300 hover:bg-surface-overlay;
+    @apply btn text-ink-soft hover:bg-surface-overlay;
   }
   .btn-danger {
-    @apply btn bg-accent text-white hover:brightness-110 active:scale-[0.98];
+    @apply btn bg-red-600 text-white hover:bg-red-700 active:scale-[0.99];
+  }
+  /* Extra-large call-to-action, e.g. "Post a New Task" */
+  .btn-xl {
+    @apply text-xl font-bold px-8;
+    min-height: 68px;
   }
 
   .card {
-    @apply rounded-2xl border border-surface-border bg-surface-raised p-6 shadow-soft;
+    @apply rounded-2xl border-2 border-surface-border bg-surface-raised p-6 shadow-card;
   }
 
-  .input {
-    @apply w-full rounded-xl border border-surface-border bg-surface-overlay
-           px-4 py-2.5 text-sm text-gray-100 placeholder:text-gray-500
-           transition-colors focus:border-brand-400 focus:outline-none
-           focus:ring-1 focus:ring-brand-400;
+  .input,
+  .select,
+  .textarea {
+    @apply w-full rounded-2xl border-2 border-surface-border bg-surface-raised
+           px-4 py-3.5 text-lg text-ink placeholder:text-ink-muted
+           transition-colors focus:border-brand-500 focus:outline-none;
+    min-height: 56px;
+  }
+  .textarea {
+    @apply py-3 leading-relaxed;
+    min-height: 120px;
   }
   .label {
-    @apply mb-1.5 block text-sm font-medium text-gray-300;
+    @apply mb-2 block text-lg font-semibold text-ink;
+  }
+  .help-text {
+    @apply mt-1.5 text-base text-ink-muted;
   }
 
   .chip {
-    @apply inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs
-           font-medium;
+    @apply inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-base
+           font-semibold;
   }
 
   .skeleton {
-    @apply relative overflow-hidden rounded-lg bg-surface-overlay;
+    @apply relative overflow-hidden rounded-xl bg-surface-overlay;
   }
   .skeleton::after {
     @apply absolute inset-0 -translate-x-full;
@@ -78,10 +109,10 @@ body {
     background-image: linear-gradient(
       90deg,
       transparent,
-      rgba(255, 255, 255, 0.06),
+      rgba(20, 102, 184, 0.08),
       transparent
     );
-    animation: shimmer 1.4s infinite;
+    animation: shimmer 1.5s infinite;
   }
 }
 

@@ -59,8 +59,8 @@ export async function deleteUser(id: string) {
   const admin = createAdminClient();
   if (!admin) {
     // Without the service role we can only remove the profile + owned data.
-    await ctx.supabase.from("content_items").delete().eq("user_id", id);
-    await ctx.supabase.from("brand_profiles").delete().eq("user_id", id);
+    await ctx.supabase.from("payments").delete().eq("user_id", id);
+    await ctx.supabase.from("tasks").delete().eq("user_id", id);
     const { error } = await ctx.supabase.from("profiles").delete().eq("id", id);
     if (error) return { error: error.message };
     revalidatePath("/admin");

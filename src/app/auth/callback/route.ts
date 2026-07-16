@@ -5,13 +5,28 @@ import { createClient } from "@/lib/supabase/server";
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get("code");
-  const next = searchParams.get("next") ?? "/dashboard";
+  const next = searchParams.get("next");
 
   if (code) {
     const supabase = await createClient();
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) {
-      return NextResponse.redirect(`${origin}${next}`);
+      if (next) return NextResponse.redirect(`${origin}${next}`);
+
+      // Send brand-new users straight to posting their first task.
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      let dest = "/dashboard";
+      if (user) {
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("onboarding_completed")
+          .eq("id", user.id)
+          .maybeSingle();
+        if (!profile?.onboarding_completed) dest = "/onboarding";
+      }
+      return NextResponse.redirect(`${origin}${dest}`);
     }
   }
 

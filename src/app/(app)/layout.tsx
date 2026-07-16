@@ -1,4 +1,3 @@
-import { redirect } from "next/navigation";
 import { Sidebar } from "@/components/app/Sidebar";
 import { requireProfile } from "@/lib/data";
 
@@ -11,9 +10,6 @@ export default async function AppLayout({
   children: React.ReactNode;
 }) {
   const profile = await requireProfile();
-
-  // Nudge brand-new users through onboarding first.
-  if (!profile.onboarding_completed) redirect("/onboarding");
 
   return (
     <div className="flex min-h-screen flex-col lg:flex-row">

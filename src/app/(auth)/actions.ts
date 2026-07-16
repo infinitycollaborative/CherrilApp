@@ -26,10 +26,10 @@ export async function signUp(
   const email = String(formData.get("email") || "").trim();
   const password = String(formData.get("password") || "");
   const fullName = String(formData.get("full_name") || "").trim();
-  const company = String(formData.get("company_name") || "").trim();
+  const phone = String(formData.get("phone") || "").trim();
 
-  if (!email || !password || !company)
-    return { error: "Email, password and company name are required." };
+  if (!email || !password || !fullName)
+    return { error: "Please enter your name, email and a password." };
   if (password.length < 8)
     return { error: "Password must be at least 8 characters." };
 
@@ -38,7 +38,7 @@ export async function signUp(
     email,
     password,
     options: {
-      data: { full_name: fullName, company_name: company },
+      data: { full_name: fullName, phone },
     },
   });
 
@@ -52,7 +52,7 @@ export async function signUp(
   if (!session) {
     return {
       message:
-        "Check your inbox to confirm your email, then log in to finish onboarding.",
+        "Check your email inbox to confirm your address, then log in to get started.",
     };
   }
 
